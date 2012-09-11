@@ -1,0 +1,1 @@
+cat `ls -t ./rank/cn_all_*.txt | head -n 1` | head -n `expr $1 \+ 4` | tail -n $1

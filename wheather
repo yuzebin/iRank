@@ -1,0 +1,18 @@
+n=5
+if [ $# -eq 1 ]; then
+    n=$1
+fi
+
+case $n in
+  0)
+    cat `ls -t /root/rank/cn_wheather_*.txt | head -n 1`    
+    ;;
+  *)
+    echo 09-11 am.
+    for i in "MeteoAlpi";
+        do 
+        echo "$i";grep -H -e "$i" /root/rank/cn_wheather*.txt | sed -e "s:^:    :" -e "s:</string>::" -e "s:\.txt\:: :" -e "s:\/root\/rank\/cn\_wheather\_::" -e "s:T: :" -e "s:\(\ [0-9][0-9]\)\([0-9][0-9]\ \):\1\:\2:" -e "s:\(\ [0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\ \):\1\-\2\-\3:" | tail -n $n;echo "";
+        done
+    ;;
+esac
+
