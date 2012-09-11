@@ -1,3 +1,6 @@
+#! /bin/sh
+
+
 # china store
 store_front=143465-19,4
 
@@ -17,12 +20,13 @@ cookies=(
     "Connection: keep-alive"
     )
 
-store_all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
+all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
 whether_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
 game_all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6014&showTopLevelGenre=true&selected-tab-index=1&top-ten-m=42"
 game_strategy="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7017&selected-tab-index=1&top-ten-m=42"
 game_puzzle="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7012&selected-tab-index=1&top-ten-m=42"
 
+# if you need run this script in crontab , you must give the fullpath to below command
 CURL=curl
 GZIP=gzip
 GREP=grep
@@ -45,28 +49,36 @@ get_rank()
     curl_command_line="$CURL $curl_cookie_param \"$2\"$format_command"
     # echo $curl_command_line
     eval "$curl_command_line"
+    echo "rank is stored in file $filename_pattern"
 }
 
 usage()
 {
     echo "Usage: ";
-    echo "    $0 game_all|whether|all";
+    echo "    chmod r+x $0"
+    echo "    $0 [all|whether|game_all|game_strategy|game_puzzle]";
 
 }
 
 if [ $# -eq 1 ]; then
     case $1 in
-        game_all)
-            get_rank "cn_game_all" $game_all_url
+        all)
+            get_rank "cn_all" $all_url
             ;;
         whether)
             get_rank "cn_wheather" $whether_url
             ;;
-        all)
-            get_rank "cn_all" $store_all_url
+        game_all)
+            get_rank "cn_game_all" $game_all_url
+            ;;
+        game_strategy)
+            get_rank "cn_game_strategy" $game_strategy_url
+            ;;
+        game_puzzle)
+            get_rank "cn_game_puzzle" $game_puzzle_url
             ;;
         *)
-            echo $0 game_all|whether|all
+            usage
             ;;
     esac
 else
