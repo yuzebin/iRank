@@ -1,0 +1,45 @@
+#! /bin/sh
+# view the recent rank change by app_name
+
+# file_path ended with /
+file_path=./
+file_prefix=cn
+
+usage()
+{
+    echo "Usage : "
+    echo "    chmod +rx $0"
+    echo "    $0 rank_name app_name change_times"
+}
+
+# viewrank rank_name app_name change_times
+viewrank()
+{
+    if [ $3 -eq 0 ]; then
+        if [ $2 = "" ]; then
+            cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1`  
+        else
+            cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1` | grep $2
+        fi
+    else
+        echo "========"
+        echo "  $2 @ $1 : ";
+        grep -H -e "$2" "$file_path""$file_prefix"_$1*.txt | sed -e "s:^:    :" -e "s:</string>::" -e "s:\.txt\:: :" -e "s:$4$5\_::" -e "s:T: :" -e "s:\(\ [0-9][0-9]\)\([0-9][0-9]\ \):\1\:\2:" -e "s:\(\ [0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\ \):\1\-\2\-\3:" | tail -n $3;
+        echo "";
+    fi
+
+}
+
+if [ $# -eq 3 ]; then
+    viewrank $1 $2 $3
+else
+    if [ $# -eq 2 ]; then
+        viewrank $1 $2 0   
+    else
+        if [ $# -eq 1 ]; then
+            viewrank $1 "" 0
+        else
+            usage
+        fi
+    fi
+fi

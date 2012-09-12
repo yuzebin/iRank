@@ -1,6 +1,5 @@
 #! /bin/sh
 
-
 # china store
 store_front=143465-19,4
 
@@ -20,12 +19,6 @@ cookies=(
     "Connection: keep-alive"
     )
 
-all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
-whether_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
-game_all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6014&showTopLevelGenre=true&selected-tab-index=1&top-ten-m=42"
-game_strategy="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7017&selected-tab-index=1&top-ten-m=42"
-game_puzzle="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7012&selected-tab-index=1&top-ten-m=42"
-
 # if you need run this script in crontab , you must give the fullpath to below command
 CURL=curl
 GZIP=gzip
@@ -33,11 +26,21 @@ GREP=grep
 AWK=awk
 SED=sed
 
+# file_path ended with /
+file_path=./
+file_prefix=cn
+
+all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
+whether_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
+game_all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6014&showTopLevelGenre=true&selected-tab-index=1&top-ten-m=42"
+game_strategy_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7017&selected-tab-index=1&top-ten-m=42"
+game_puzzle_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7012&selected-tab-index=1&top-ten-m=42"
+
 # get_rank(rank_name rank_url)
 get_rank()
 {
-    filename_pattern=$1_`date +%Y%m%dT%H%M`.txt
-    format_command=" | $GZIP -d | $GREP \<key\>title\<\/key\> | $AWK -F'<string>' '{print \$2}' | $SED -e 's:\<\/string\>::g' > $filename_pattern"
+    filename="$file_path""$file_prefix"_$1_`date +%Y%m%dT%H%M`.txt
+    format_command=" | $GZIP -d | $GREP \<key\>title\<\/key\> | $AWK -F'<string>' '{print \$2}' | $SED -e 's:\<\/string\>::g' > $filename"
 
     curl_cookie_param=
 
@@ -49,33 +52,20 @@ get_rank()
     curl_command_line="$CURL $curl_cookie_param \"$2\"$format_command"
     # echo $curl_command_line
     eval "$curl_command_line"
-    echo "rank is stored in file $filename_pattern"
+    echo "rank is stored in file $filename"
 }
 
 usage()
 {
     echo "Usage: ";
-    echo "    chmod r+x $0"
+    echo "    chmod +rx $0"
     echo "    $0 [all|whether|game_all|game_strategy|game_puzzle]";
-
 }
 
 if [ $# -eq 1 ]; then
     case $1 in
-        all)
-            get_rank "cn_all" $all_url
-            ;;
-        whether)
-            get_rank "cn_wheather" $whether_url
-            ;;
-        game_all)
-            get_rank "cn_game_all" $game_all_url
-            ;;
-        game_strategy)
-            get_rank "cn_game_strategy" $game_strategy_url
-            ;;
-        game_puzzle)
-            get_rank "cn_game_puzzle" $game_puzzle_url
+        all|whether|game_all|game_strategy|game_puzzle)
+            get_rank "$1" `eval echo "\$"$1"_url"`
             ;;
         *)
             usage
