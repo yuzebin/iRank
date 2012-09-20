@@ -1,22 +1,27 @@
 #! /bin/sh
+# 
+# usage:
+#     sudo chmod +rx view_rank    
+#     view_rank rank_name app_name last_change_amount
+# 
 # view the recent rank change by app_name
 
 # file_path ended with /
-file_path=./
+file_path=./rank/
 file_prefix=cn
 
 usage()
 {
     echo "Usage : "
     echo "    chmod +rx $0"
-    echo "    $0 rank_name app_name change_times"
+    echo "    $0 rank_name app_name last_change_amount"
 }
 
 # viewrank rank_name app_name change_times
 viewrank()
 {
     if [ $3 -eq 0 ]; then
-        if [ $2 = "" ]; then
+        if [ $2 -eq 0 ]; then
             cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1`  
         else
             cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1` | grep $2

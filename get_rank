@@ -27,14 +27,11 @@ AWK=awk
 SED=sed
 
 # file_path ended with /
-file_path=./
+file_path=/root/rank/
 file_prefix=cn
 
 all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
-whether_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
-game_all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6014&showTopLevelGenre=true&selected-tab-index=1&top-ten-m=42"
-game_strategy_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7017&selected-tab-index=1&top-ten-m=42"
-game_puzzle_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=7012&selected-tab-index=1&top-ten-m=42"
+weather_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
 
 # get_rank(rank_name rank_url)
 get_rank()
@@ -59,12 +56,12 @@ usage()
 {
     echo "Usage: ";
     echo "    chmod +rx $0"
-    echo "    $0 [all|whether|game_all|game_strategy|game_puzzle]";
+    echo "    $0 [all|weather]";
 }
 
 if [ $# -eq 1 ]; then
     case $1 in
-        all|whether|game_all|game_strategy|game_puzzle)
+        all|weather)
             get_rank "$1" `eval echo "\$"$1"_url"`
             ;;
         *)
