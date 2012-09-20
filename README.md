@@ -2,8 +2,17 @@ iRank
 =====
 
 get app store rank
+    get_rank: get the rank from app store
+        usage: get_rank all|weather
 
-if you wanna automatic run this script , you can add this script into crontab, just like bellow:
+    view_rank: view the rank got by get_rank 
+        usage: view_rank all|weather app_name change_times
+        usage: view_rank all|weather 0 0
 
-    #M H D m w command with fullpath
-    * */1 * * * fullpath_of_script
+    diff_cn: record the rank whether diffirent, called by crontab
+
+    curl_top_cn: get the rank by get_rank, called by crontab 
+
+    today_rank: view the rank change 
+    
+    view_changes: view the rank whether changes 
