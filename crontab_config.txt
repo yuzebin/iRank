@@ -1,2 +1,3 @@
+#m h d M W cmd
 10,25,40,55 */1 * * * /root/curl_top_cn > /dev/null 2>&1
 0,15,30,45 */1 * * * /root/diff_cn > /dev/null 2>&1

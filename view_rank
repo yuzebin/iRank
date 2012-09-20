@@ -7,7 +7,7 @@
 # view the recent rank change by app_name
 
 # file_path ended with /
-file_path=./rank/
+file_path=/root/rank/
 file_prefix=cn
 
 usage()
@@ -15,6 +15,8 @@ usage()
     echo "Usage : "
     echo "    chmod +rx $0"
     echo "    $0 rank_name app_name last_change_amount"
+    echo "    # view all rank"
+    echo "    $0 rank_name 0 0"
 }
 
 # viewrank rank_name app_name change_times
