@@ -2,49 +2,35 @@
 # 
 # usage:
 #     sudo chmod +rx view_rank    
-#     view_rank rank_name app_name last_change_amount
+#     view_rank country rank_name app_name last_change_amount
 # 
-# view the recent rank change by app_name
+# view the recent rank change by country by app_rank by app_name
 
-# file_path ended with /
-file_path=/root/rank/
-file_prefix=cn
+# file_path (ended with /)
+file_path=./rank/
+
+country=$1
 
 usage()
 {
     echo "Usage : "
     echo "    chmod +rx $0"
-    echo "    $0 rank_name app_name last_change_amount"
-    echo "    # view all rank"
-    echo "    $0 rank_name 0 0"
+    echo "    $0 country [rank_name [app_name [last_change_amount]]]"
+    echo "  Example:"
+    echo "    $0 cn grossing 霸气三国 5"
 }
 
-# viewrank rank_name app_name change_times
-viewrank()
-{
-    if [ $3 -eq 0 ]; then
-        if [ $2 -eq 0 ]; then
-            cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1`  
-        else
-            cat `ls -t "$file_path""$file_prefix"_"$1"_*.txt | head -n 1` | grep $2
-        fi
-    else
-        echo "========"
-        echo "  $2 @ $1 : ";
-        grep -H -e "$2" "$file_path""$file_prefix"_$1*.txt | sed -e "s:^:    :" -e "s:</string>::" -e "s:\.txt\:: :" -e "s:$4$5\_::" -e "s:T: :" -e "s:\(\ [0-9][0-9]\)\([0-9][0-9]\ \):\1\:\2:" -e "s:\(\ [0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\ \):\1\-\2\-\3:" | tail -n $3;
-        echo "";
-    fi
-
-}
-
-if [ $# -eq 3 ]; then
-    viewrank $1 $2 $3
+if [ $# -eq 4 ]; then
+    echo "========"
+    echo "  $3 @ $2 : ";
+    grep -H -e "$3" "$file_path""$country"_$2*.txt | sed -e "s:^:    :" -e "s:</string>::" -e "s:\.txt\:: :" -e "s:$4$5\_::" -e "s:T: :" -e "s:\(\ [0-9][0-9]\)\([0-9][0-9]\ \):\1\:\2:" -e "s:\(\ [0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\ \):\1\-\2\-\3:" | tail -n $4;
+    echo "";
 else
-    if [ $# -eq 2 ]; then
-        viewrank $1 $2 0   
+    if [ $# -eq 3 ]; then
+        cat `ls -t "$file_path""$country"_"$2"_*.txt | head -n 1` | grep $3
     else
-        if [ $# -eq 1 ]; then
-            viewrank $1 "" 0
+        if [ $# -eq 2 ]; then
+            cat `ls -t "$file_path""$country"_"$2"_*.txt | head -n 1`  
         else
             usage
         fi

@@ -1,37 +1,61 @@
 #! /bin/sh
 
-# china store
-store_front=143465-19,4
-
-# the cookies apple need
-cookies=(
-    "Host: itunes.apple.com" \
-    "User-Agent: iTunes-iPod/5.1.1 (4; 8GB; dt:71)" \
-    "Accept: */*" \
-    "Accept-Language: zh-Hans;q=1.0,en;q=1.0,fr;q=0.9,de;q=0.9,ja;q=0.9,nl;q=0.9,it;q=0.8,es;q=0.8,pt;q=0.8,pt-PT;q=0.7,da;q=0.7,fi;q=0.7,nb;q=0.7,sv;q=0.6,ko;q=0.6,zh-Hant;q=0.6,ru;q=0.5,pl;q=0.5,tr;q=0.5,uk;q=0.5,ar;q=0.4,hr;q=0.4,cs;q=0.4,el;q=0.3,he;q=0.3,ro;q=0.3,sk;q=0.3,th;q=0.2,id;q=0.2,ms;q=0.2,en-GB;q=0.1,ca;q=0.1,hu;q=0.1,vi;q=0.1" \
-    "X-Apple-Partner: origin.0" \
-    "X-Apple-Connection-Type: WiFi" \
-    "X-Apple-Client-Application: Software" \
-    "X-Apple-Client-Versions: GameCenter/2.0" \
-    "X-Dsid: 400453337" \
-    "X-Apple-Store-Front: $store_front" \
-    "Accept-Encoding: gzip, deflate" \
-    "Connection: keep-alive"
-    )
-
-# if you need run this script in crontab , you must give the fullpath to below command
+# if you need run this script in crontab , you must use the fullpath to below command
 CURL=curl
 GZIP=gzip
 GREP=grep
 AWK=awk
 SED=sed
 
-# file_path ended with /
-file_path=/root/rank/
-file_prefix=cn
-
-all_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
+# define rank url
+free_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
+paid_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=0&top-ten-m=42&genreId=36"
+grossing_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=2&top-ten-m=42&genreId=36"
 weather_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
+
+# file_path (ended with /)
+file_path=/root/rank/
+
+usage()
+{
+    echo "Usage: ";
+    echo "    chmod +rx $0"
+    echo "    $0 country [paid|free|grossing|weather]";
+}
+
+set_store()
+{
+    case $1 in
+        cn)
+            # chinese store
+            store_front=143465-19,4
+            file_prefix=cn
+            ;;
+        jp)
+            # japanese store
+            store_front=143462-9,4
+            file_prefix=jp
+            ;;
+        *)
+            ;;
+    esac
+
+    # set the cookies apple need
+    cookies=(
+        "Host: itunes.apple.com" \
+        "User-Agent: iTunes-iPod/5.1.1 (4; 8GB; dt:71)" \
+        "Accept: */*" \
+        "Accept-Language: zh-Hans;q=1.0,en;q=1.0,fr;q=0.9,de;q=0.9,ja;q=0.9,nl;q=0.9,it;q=0.8,es;q=0.8,pt;q=0.8,pt-PT;q=0.7,da;q=0.7,fi;q=0.7,nb;q=0.7,sv;q=0.6,ko;q=0.6,zh-Hant;q=0.6,ru;q=0.5,pl;q=0.5,tr;q=0.5,uk;q=0.5,ar;q=0.4,hr;q=0.4,cs;q=0.4,el;q=0.3,he;q=0.3,ro;q=0.3,sk;q=0.3,th;q=0.2,id;q=0.2,ms;q=0.2,en-GB;q=0.1,ca;q=0.1,hu;q=0.1,vi;q=0.1" \
+        "X-Apple-Partner: origin.0" \
+        "X-Apple-Connection-Type: WiFi" \
+        "X-Apple-Client-Application: Software" \
+        "X-Apple-Client-Versions: GameCenter/2.0" \
+        "X-Dsid: 400453337" \
+        "X-Apple-Store-Front: $store_front" \
+        "Accept-Encoding: gzip, deflate" \
+        "Connection: keep-alive"
+        )
+}
 
 # get_rank(rank_name rank_url)
 get_rank()
@@ -50,19 +74,14 @@ get_rank()
     # echo $curl_command_line
     eval "$curl_command_line"
     echo "rank is stored in file $filename"
+    head -n 105 $filename > $filename.top100
 }
 
-usage()
-{
-    echo "Usage: ";
-    echo "    chmod +rx $0"
-    echo "    $0 [all|weather]";
-}
-
-if [ $# -eq 1 ]; then
-    case $1 in
-        all|weather)
-            get_rank "$1" `eval echo "\$"$1"_url"`
+if [ $# -eq 2 ]; then
+    case $2 in
+        paid|free|grossing|weather)
+            set_store $1
+            get_rank "$2" `eval echo "\$"$2"_url"`
             ;;
         *)
             usage
