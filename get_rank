@@ -7,11 +7,16 @@ GREP=grep
 AWK=awk
 SED=sed
 
-# define rank url
+# define rank url iPhone/iTouch
 free_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
 paid_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=0&top-ten-m=42&genreId=36"
 grossing_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=2&top-ten-m=42&genreId=36"
 weather_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
+
+# define rank url iPad
+free_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=cn&genreId=36&pageSize=120&popId=47&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
+paid_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=cn&genreId=36&pageSize=120&popId=46&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
+grossing_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=cn&genreId=36&pageSize=120&popId=44&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
 
 # file_path (ended with /)
 file_path=/root/rank/
@@ -29,18 +34,22 @@ set_store()
         cn)
             # chinese store
             store_front=143465-19,4
+            store_front_pad=143465-19,9
             file_prefix=cn
+            file_prefix_pad=cn_pad
             ;;
         jp)
             # japanese store
             store_front=143462-9,4
+            store_front_pad=143462-9,4
             file_prefix=jp
+            file_prefix_pad=jp_pad
             ;;
         *)
             ;;
     esac
 
-    # set the cookies apple need
+    # set the cookies iPhone/iTouch need
     cookies=(
         "Host: itunes.apple.com" \
         "User-Agent: iTunes-iPod/5.1.1 (4; 8GB; dt:71)" \
@@ -52,6 +61,22 @@ set_store()
         "X-Apple-Client-Versions: GameCenter/2.0" \
         "X-Dsid: 400453337" \
         "X-Apple-Store-Front: $store_front" \
+        "Accept-Encoding: gzip, deflate" \
+        "Connection: keep-alive"
+        )
+
+    # set the cookies iPad need
+    cookies_pad=(
+        "Host: itunes.apple.com" \
+        "User-Agent: iTunes-iPad-M/5.1.1 (5; 32GB; dt:78)" \
+        "Accept: */*" \
+        "X-Apple-Client-Versions: iBooks/2.2; iTunesU/1.3; GameCenter/2.0" \
+        "X-Apple-Partner: origin.0" \
+        "X-Apple-Connection-Type: WiFi" \
+        "X-Dsid: 1085955902" \
+        "X-Apple-Store-Front: $store_front_pad" \
+        "X-Apple-Client-Application: Software" \
+        "Accept-Language: zh-cn" \
         "Accept-Encoding: gzip, deflate" \
         "Connection: keep-alive"
         )
@@ -77,11 +102,31 @@ get_rank()
     head -n 105 $filename > $filename.top100
 }
 
+# get_rank_pad(rank_name rank_url)
+get_rank_pad()
+{
+    filename="$file_path""$file_prefix_pad"_$1_`date +%Y%m%dT%H%M`.txt
+    format_command=" | $GZIP -d | $SED -e 's:\,\ \":\n:g' | $GREP name | $GREP -v artist | $SED -e 's/name\"\:\"//' -e 's/\"//' > $filename"
+    curl_cookie_param=
+
+    for c in "${cookies_pad[@]}";
+        do
+        curl_cookie_param=`echo $curl_cookie_param -H \"$c\"`;
+    done
+
+    curl_command_line="$CURL $curl_cookie_param \"$2\"$format_command"
+    # echo $curl_command_line
+    eval "$curl_command_line"
+    echo "rank is stored in file $filename"
+    head -n 105 $filename > $filename.top100
+}
+
 if [ $# -eq 2 ]; then
     case $2 in
         paid|free|grossing|weather)
             set_store $1
             get_rank "$2" `eval echo "\$"$2"_url"`
+            get_rank_pad "$2" `eval echo "\$"$2"_url_pad"`
             ;;
         *)
             usage

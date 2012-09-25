@@ -13,13 +13,15 @@ usage()
 
 get_diff()
 {
-    /usr/bin/diff -q `ls -t /root/rank/$1_$2*.txt | head -n 2` >>/root/$1_$2_chg.txt
+    /usr/bin/diff -q `ls -t /root/rank/$1_$2*.txt | head -n 2` >>/root/rank_chg/$1_$2_chg.txt
 
-    /usr/bin/diff -q `ls -t /root/rank/$1_$2*.top100 | head -n 2` >>/root/top100_$1_$2_chg.txt
+    /usr/bin/diff -q `ls -t /root/rank/$1_$2*.top100 | head -n 2` >>/root/rank_chg/top100_$1_$2_chg.txt
 }
 
 for t in "${target[@]}";
     do
     get_diff cn $t;
     get_diff jp $t;
+    get_diff cn_pad $t;
+    get_diff jp_pad $t;
 done
