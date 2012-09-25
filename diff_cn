@@ -1,2 +1,0 @@
-/usr/bin/diff -q `ls -t /root/rank/cn_all*.txt | head -n 2` >>/root/cn_all_chg.txt
-/usr/bin/diff -q `ls -t /root/rank/cn_weather*.txt | head -n 2` >>/root/cn_weather_chg.txt
