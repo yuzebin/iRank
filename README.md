@@ -3,20 +3,23 @@ iRank
 
 get app store rank
 
-    today_rank: 
-        call view_rank , return the result
+    cron_rank:
+        get the rank through irank, called by crontab
 
-    view_rank: 
-        view the rank got by curl_rank
-        usage: view_rank country paid|free|grossing|weather [app_name [change_times]]
+    irank:
+      get and view the app store top rank
+          version 0.1
+      usage: $0 <command> [options ...]
+        <command>       Command to be executed
 
-    curl_rank: 
-        get the rank through get_rank, called by crontab
+      Valid commands are:
+        get   get the top rank from appstore
+              usage : $0 get cn|jp free|paid|grossing|weather
 
-    diff_rank: 
-        record the rank whether diffirent, called by crontab
-    
-    get_rank: 
-        get the rank from app store
-        usage: get_rank country paid|free|grossing|weather
+        view  view the specific app's rank
+              usage : $0 view cn|jp free|paid|grossing|weather [app_name [    _change_times]]
+
+        diff  record the changes of rank
+              usage : $0 diff cn|jp free|paid|grossing|weather
+
 

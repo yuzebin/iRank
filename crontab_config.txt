@@ -1,3 +1,3 @@
 #m h d M W cmd
-10,25,40,55 */1 * * * /root/curl_rank > /dev/null 2>&1
-0,15,30,45 */1 * * * /root/diff_rank > /dev/null 2>&1
+10,25,40,55 */1 * * * /root/cron_rank > /dev/null 2>&1
+0,15,30,45 */1 * * * /root/irank diff > /dev/null 2>&1
