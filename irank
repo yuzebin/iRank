@@ -45,7 +45,6 @@ usage()
     echo ""
     echo "    view  view the specific app's rank"
     echo "          usage : $0 view cn|jp free|paid|grossing|weather [app_name [recent_change_times]]"
-    echo ""
     echo "    diff  record the changes of rank"
     echo "          usage : $0 diff cn|jp free|paid|grossing|weather"
     echo ""
@@ -70,53 +69,53 @@ set_store()
             exit 1
             ;;
     esac
+
+    file_prefix=$country_code
+    file_prefix_pad="$country_code"_pad
+
+    # define rank url for iPhone
+    free_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
+    paid_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=0&top-ten-m=42&genreId=36"
+    grossing_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=2&top-ten-m=42&genreId=36"
+    weather_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
+
+    # define rank url for iPad
+    paid_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=47&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
+    grossing_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=46&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
+    free_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=44&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
+
+    # set the cookies for iPhone
+    cookies=(
+        "Host: itunes.apple.com" \
+        "User-Agent: iTunes-iPod/5.1.1 (4; 8GB; dt:71)" \
+        "Accept: */*" \
+        "X-Apple-Partner: origin.0" \
+        "X-Apple-Connection-Type: WiFi" \
+        "X-Apple-Client-Application: Software" \
+        "X-Apple-Client-Versions: GameCenter/2.0" \
+        "X-Dsid: 400453337" \
+        "X-Apple-Store-Front: $store_front" \
+        "Accept-Language: zh-cn" \
+        "Accept-Encoding: gzip, deflate" \
+        "Connection: keep-alive"
+        )
+    
+    # set the cookies for iPad
+    cookies_pad=(
+        "Host: itunes.apple.com" \
+        "User-Agent: iTunes-iPad-M/5.1.1 (5; 32GB; dt:78)" \
+        "Accept: */*" \
+        "X-Apple-Client-Versions: iBooks/2.2; iTunesU/1.3; GameCenter/2.0" \
+        "X-Apple-Partner: origin.0" \
+        "X-Apple-Connection-Type: WiFi" \
+        "X-Dsid: 1085955902" \
+        "X-Apple-Store-Front: $store_front_pad" \
+        "X-Apple-Client-Application: Software" \
+        "Accept-Language: zh-cn" \
+        "Accept-Encoding: gzip, deflate" \
+        "Connection: keep-alive"
+        )
 }
-
-file_prefix=$country_code
-file_prefix_pad="$country_code"_pad
-
-# define rank url iPhone/iTouch
-free_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=1&top-ten-m=42&genreId=36"
-paid_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=0&top-ten-m=42&genreId=36"
-grossing_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?selected-tab-index=2&top-ten-m=42&genreId=36"
-weather_url="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAutoSourcedGenrePage?id=6001&selected-tab-index=1&top-ten-m=42"
-
-# define rank url iPad
-free_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=47&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
-paid_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=46&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
-grossing_url_pad="http://itunes.apple.com/WebObjects/MZStore.woa/wa/topChartFragmentData?cc=$country_code&genreId=36&pageSize=120&popId=44&pageNumbers=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9"
-
-# set the cookies for iPhone
-cookies=(
-    "Host: itunes.apple.com" \
-    "User-Agent: iTunes-iPod/5.1.1 (4; 8GB; dt:71)" \
-    "Accept: */*" \
-    "X-Apple-Partner: origin.0" \
-    "X-Apple-Connection-Type: WiFi" \
-    "X-Apple-Client-Application: Software" \
-    "X-Apple-Client-Versions: GameCenter/2.0" \
-    "X-Dsid: 400453337" \
-    "X-Apple-Store-Front: $store_front" \
-    "Accept-Language: zh-cn" \
-    "Accept-Encoding: gzip, deflate" \
-    "Connection: keep-alive"
-    )
-
-# set the cookies for iPad
-cookies_pad=(
-    "Host: itunes.apple.com" \
-    "User-Agent: iTunes-iPad-M/5.1.1 (5; 32GB; dt:78)" \
-    "Accept: */*" \
-    "X-Apple-Client-Versions: iBooks/2.2; iTunesU/1.3; GameCenter/2.0" \
-    "X-Apple-Partner: origin.0" \
-    "X-Apple-Connection-Type: WiFi" \
-    "X-Dsid: 1085955902" \
-    "X-Apple-Store-Front: $store_front_pad" \
-    "X-Apple-Client-Application: Software" \
-    "Accept-Language: zh-cn" \
-    "Accept-Encoding: gzip, deflate" \
-    "Connection: keep-alive"
-    )
 
 get_rank()
 {
@@ -176,7 +175,7 @@ do_get()
 do_view()
 {
     country=$1
-
+    
     if [ $# -eq 4 ]; then
         echo "==== iPhone ===="
         echo "  $3 @ $2 : ";
@@ -208,7 +207,7 @@ do_view()
         fi
     fi
 }
-
+    
 get_diff()
 {
     $DIFF -q `ls -t $file_path$1_$2*.txt | head -n 2` >>"$file_path"chg/$1_$2_chg.txt
@@ -222,7 +221,7 @@ do_diff()
         "free" \
         "grossing" \
     )
-
+    
     for t in "${app_rank[@]}";
         do
         get_diff cn $t;
@@ -232,7 +231,7 @@ do_diff()
     done
 }
 
-if [ $# -eq 0 ]; then usage; fi
+if [ $# -eq 0 ]; then usage; fi 
 
 case $1 in
     get)
