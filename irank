@@ -129,7 +129,7 @@ get_rank()
         curl_cookie_param=`echo $curl_cookie_param -H \"$c\"`;
     done
 
-    curl_command_line="$CURL $curl_cookie_param \"$2\"$format_command"
+    curl_command_line="$CURL -L $curl_cookie_param \"$2\"$format_command"
     # echo $curl_command_line
     eval "$curl_command_line"
     echo "rank is stored in file $filename"
@@ -147,7 +147,7 @@ get_rank_pad()
         curl_cookie_param=`echo $curl_cookie_param -H \"$c\"`;
     done
 
-    curl_command_line="$CURL $curl_cookie_param \"$2\"$format_command"
+    curl_command_line="$CURL -L $curl_cookie_param \"$2\"$format_command"
     # echo $curl_command_line
     eval "$curl_command_line"
     echo "rank is stored in file $filename"
